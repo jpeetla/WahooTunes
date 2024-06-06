@@ -1,0 +1,76 @@
+CREATE TABLE Genre (
+    GenreID INTEGER PRIMARY KEY,
+    Name TEXT
+);
+CREATE TABLE Artist (
+    ArtistID INTEGER PRIMARY KEY,
+    StageName TEXT,
+    RealName TEXT,
+    PhoneNumber TEXT
+);
+CREATE TABLE Song (
+    SongID INTEGER PRIMARY KEY,
+    SongTitle TEXT,
+    SongLength INTEGER,
+    GenreID INTEGER,
+    FOREIGN KEY (GenreID) REFERENCES Genre(GenreID)
+);
+CREATE TABLE SongArtist (
+    SongArtistID INTEGER PRIMARY KEY,
+    SongID INTEGER,
+    ArtistID INTEGER,
+    FOREIGN KEY (SongID) REFERENCES Song(SongID),
+    FOREIGN KEY (ArtistID) REFERENCES Artist(ArtistID)
+);
+
+CREATE TABLE Rating (
+    RatingID INTEGER PRIMARY KEY,
+    RatingValue INTEGER CHECK (RatingValue >= 1 AND RatingValue <= 5),
+    Review TEXT,
+    SongID INTEGER,
+    UserID INTEGER,
+    FOREIGN KEY (SongID) REFERENCES Song(SongID),
+    FOREIGN KEY (UserID) REFERENCES User(UserID)
+);
+CREATE TABLE User (
+    UserID INTEGER PRIMARY KEY,
+    FirstName TEXT,
+    LastName TEXT,
+    Email TEXT
+);
+CREATE TABLE Venue (
+    VenueID INTEGER PRIMARY KEY,
+    VenueName TEXT,
+    VenueStreet TEXT,
+    VenueCity TEXT,
+    VenueState TEXT,
+    VenueZipCode TEXT,
+    VenueWebsite TEXT,
+    ContactFirstName TEXT,
+    ContactLastName TEXT,
+    PhoneNumber TEXT
+);
+CREATE TABLE EventVenue (
+    EventVenueID INTEGER PRIMARY KEY,
+    VenueID INTEGER,
+    EventID INTEGER,
+    FOREIGN KEY (VenueID) REFERENCES Venue(VenueID),
+    FOREIGN KEY (EventID) REFERENCES Event(EventID)
+);
+CREATE TABLE Event (
+    EventID INTEGER PRIMARY KEY,
+    Name TEXT,
+    Date TEXT,
+    ContactFirstName TEXT,
+    ContactLastName TEXT,
+    CPPhoneNumber TEXT
+);
+CREATE TABLE EventAttendee (
+    EventAttendeeID INTEGER PRIMARY KEY,
+    RegistrationDate TEXT,
+    TicketType TEXT,
+    EventID INTEGER,
+    UserID INTEGER,
+    FOREIGN KEY (EventID) REFERENCES Event(EventID),
+    FOREIGN KEY (UserID) REFERENCES User(UserID)
+);
