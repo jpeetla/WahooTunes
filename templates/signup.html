@@ -61,8 +61,35 @@
             <input type="text" id="uvaId" name="uvaId" placeholder="Enter your UVA Computing ID">
             <input type="email" id="email" name="email" placeholder="Enter your email">
             <input type="password" id="password" name="password" placeholder="Enter your password">
-            <button type="button"><a href="/home">Sign Up</a></button>
+            <button type="submit">Sign Up</button>
         </form>
     </div>
 </body>
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var form = document.querySelector("form");
+            form.addEventListener("submit", function(e) {
+                e.preventDefault(); // Prevent the default form submission
+                var userData = {
+                    fullname: document.getElementById('fullname').value,
+                    uvaId: document.getElementById('uvaId').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                };
+                fetch('/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Handle the response data
+                    window.location.href = '/home'; // Redirect on success
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+   </script>
 </html>

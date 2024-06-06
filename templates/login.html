@@ -59,8 +59,33 @@
         <form>
             <input type="text" id="email" name="email" placeholder="Enter your email">
             <input type="password" id="password" name="password" placeholder="Enter your password">
-            <button type="button"><a href="/home">Log In</a></button>
+            <button type="submit">Log In</button>
         </form>
     </div>
 </body>
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var form = document.querySelector("form");
+            form.addEventListener("submit", function(e) {
+                e.preventDefault(); // Prevent the default form submission
+                var userData = {
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                };
+                fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Handle the response data
+                    window.location.href = '/home'; // Redirect on success
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+  </script>
 </html>

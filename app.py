@@ -1,22 +1,22 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, jsonify
+from flask_bcrypt import Bcrypt
+import json
 import pyrebase
+
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
-config = {
-    'apiKey': "AIzaSyBASkRSuh9GQdz95cPf2DHGtiI3tDCifEY",
-    'authDomain': "wahootunes.firebaseapp.com",
-    'projectId': "wahootunes",
-    'storageBucket': "wahootunes.appspot.com",
-    'messagingSenderId': "701311223380",
-    'appId': "1:701311223380:web:d8203363409f77dbeccfc1",
-    'measurementId': "G-HRS3VHRX00",
-    'databaseURL': ""
-}
 
-firebase = pyrebase.initialize_app(config)
-auth = firebase.auth()
+try:
+    with open('users.json', 'r') as f:
+        users = json.load(f)
+except FileNotFoundError:
+    users = {}
 
-app.secret_key = 'secret'
+def save_users():
+    with open('users.json', 'w') as f:
+        json.dump(users, f)
+
 @app.route("/")
 def hello():
     if('user' in session):
@@ -24,29 +24,43 @@ def hello():
     else:
         return render_template('welcome.html')
 
-@app.route("/login")
+@app.route("/login", methods=['POST', 'GET'])
 def goToLogin():
+    if request.method == "POST":
+        data = request.get_json()
+        email = data["email"]
+        password = data["password"]
+        hashed_password = users.get(email)
+
+        if hashed_password and bcrypt.check_password_hash(hashed_password, password):
+            return jsonify({"message": "Login successful"}), 200
+        else:
+            print("Authentication failed...")
     return render_template('login.html')
 
-@app.route("/signup")
+@app.route("/signup", methods=['POST', 'GET'])
 def goToSignUp():
+    if request.method == "POST":
+        data = request.get_json()
+
+        fullname = data["fullname"]
+        uvaID = data["uvaId"]
+        email = data["email"]
+        password = data["password"]
+
+        if email in users:
+            return jsonify({"error": "Email already exists"}), 409
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        users[email] = hashed_password
+        save_users()
+        return jsonify({"message": "Signup successful"}), 201
     return render_template('signup.html')
 
-@app.route('/home', methods=['POST'])
+@app.route('/home', methods=['POST', 'GET'])
 def goHome():
-    if request.method == "POST":
-        fullname = request.form.get("fullname")
-        uvaID = request.form.get("uvaID")
-        email = request.form.get("email")
-        password = request.form.get("password")
-
-        try:
-            user = auth.create_user_with_email_and_password(email, password)
-            session["user"] = email
-        except:
-            return "Failed to Sign Up"
-
     return render_template('home.html')
 
-if __name__ == "__main__":
-  app.run()
+if __name__ == '__main__':
+    app.run(debug=True)
+
