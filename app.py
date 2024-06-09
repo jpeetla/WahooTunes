@@ -80,6 +80,39 @@ def get_song_details(song_id):
     conn.close()
     return song, ratings
 
+def get_artist_details(artist_id):
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute("SELECT StageName, RealName, PhoneNumber FROM Artist WHERE ArtistID = ?", (artist_id,))
+    artist = cursor.fetchone()
+    cursor.execute("""
+        SELECT Song.SongTitle, IFNULL(AVG(Rating.RatingValue), 'No ratings yet') as AvgRating
+        FROM Song
+        JOIN SongArtist ON Song.SongID = SongArtist.SongID
+        LEFT JOIN Rating ON Song.SongID = Rating.SongID
+        WHERE SongArtist.ArtistID = ?
+        GROUP BY Song.SongID
+    """, (artist_id,))
+    songs = cursor.fetchall()
+    conn.close()
+    return artist, songs
+
+def get_genre_details(genre_id):
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute("SELECT Name FROM Genre WHERE GenreID = ?", (genre_id,))
+    genre = cursor.fetchone()
+    cursor.execute("""
+        SELECT Song.SongTitle, IFNULL(AVG(Rating.RatingValue), 'No ratings yet') as AvgRating
+        FROM Song
+        LEFT JOIN Rating ON Song.SongID = Rating.SongID
+        WHERE Song.GenreID = ?
+        GROUP BY Song.SongID, Song.SongTitle
+    """, (genre_id,))
+    songs = cursor.fetchall()
+    conn.close()
+    return genre, songs
+
 @app.route('/rate', methods=['GET', 'POST'])
 def rate():
     if request.method == 'POST':
@@ -102,6 +135,16 @@ def rate():
 def song_detail(song_id):
     song, ratings = get_song_details(song_id)
     return render_template('song_detail.html', song_title=song[0], genre=song[2], artist=song[3], song_length=song[4], ratings=ratings)
+
+@app.route('/artist/<int:artist_id>', methods=['GET'])
+def artist_detail(artist_id):
+    artist, songs = get_artist_details(artist_id)
+    return render_template('artist.html', artist_name=artist[0], real_name=artist[1], phone_number=artist[2], songs=songs)
+
+@app.route('/genre/<int:genre_id>', methods=['GET'])
+def genre_detail(genre_id):
+    genre, songs = get_genre_details(genre_id)
+    return render_template('genre.html', genre_name=genre[0], songs=songs)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 600px;
+        }
+        h1 {
+            color: #333;
+        }
+        .details, .songs {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .songs {
+            margin-top: 40px;
+        }
+        .song-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .song-title {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Artist Details</h1>
+        <div class="details">
+            <p><strong>Stage Name:</strong> {{ artist_name }}</p>
+            <p><strong>Real Name:</strong> {{ real_name }}</p>
+            <p><strong>Phone Number:</strong> {{ phone_number }}</p>
+        </div>
+        <div class="songs">
+            <h2>Songs</h2>
+            {% for song in songs %}
+                <div class="song-item">
+                    <p class="song-title">{{ song.SongTitle }}</p>
+                    <p><strong>Rating:</strong> {{ song.AvgRating }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
