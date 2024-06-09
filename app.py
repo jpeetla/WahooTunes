@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, session, jsonify
 from flask_bcrypt import Bcrypt
 import json
+import sqlite3
 import pyrebase
 
 app = Flask(__name__)
