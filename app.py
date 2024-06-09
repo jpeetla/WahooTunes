@@ -70,6 +70,16 @@ def get_songs():
     conn.close()
     return songs
 
+def get_song_details(song_id):
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute("SELECT SongTitle, GenreID, (SELECT Name FROM Genre WHERE GenreID = Song.GenreID) as Genre, (SELECT StageName FROM Artist WHERE ArtistID = (SELECT ArtistID FROM SongArtist WHERE SongID = ?)) as Artist, SongLength FROM Song WHERE SongID = ?", (song_id, song_id))
+    song = cursor.fetchone()
+    cursor.execute("SELECT RatingValue, Review, (SELECT Email FROM User WHERE UserID = Rating.UserID) as User FROM Rating WHERE SongID = ?", (song_id,))
+    ratings = cursor.fetchall()
+    conn.close()
+    return song, ratings
+
 @app.route('/rate', methods=['GET', 'POST'])
 def rate():
     if request.method == 'POST':
@@ -88,6 +98,10 @@ def rate():
     songs = get_songs()
     return render_template('rating.html', songs=songs)
 
+@app.route('/song/<int:song_id>', methods=['GET'])
+def song_detail(song_id):
+    song, ratings = get_song_details(song_id)
+    return render_template('song_detail.html', song_title=song[0], genre=song[2], artist=song[3], song_length=song[4], ratings=ratings)
 
 if __name__ == '__main__':
     app.run(debug=True)

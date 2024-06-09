@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+        h1 {
+            color: #333;
+        }
+        .details, .ratings {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .ratings {
+            margin-top: 40px;
+        }
+        .rating-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Song Details</h1>
+        <div class="details">
+            <p><strong>Title:</strong> {{ song_title }}</p>
+            <p><strong>Genre:</strong> {{ genre }}</p>
+            <p><strong>Artist:</strong> {{ artist }}</p>
+            <p><strong>Length:</strong> {{ song_length }}</p>
+        </div>
+        <div class="ratings">
+            <h2>Ratings</h2>
+            {% for rating in ratings %}
+                <div class="rating-item">
+                    <p><strong>Rating:</strong> {{ rating.RatingValue }}</p>
+                    <p><strong>Review:</strong> {{ rating.Review }}</p>
+                    <p><strong>User:</strong> {{ rating.User }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
