@@ -36,7 +36,7 @@ CREATE TABLE User (
     UserID INTEGER PRIMARY KEY,
     FirstName TEXT,
     LastName TEXT,
-    Email TEXT
+    Email TEXT UNIQUE
 );
 CREATE TABLE Venue (
     VenueID INTEGER PRIMARY KEY,

@@ -46,26 +46,50 @@ def goToSignUp():
     if request.method == "POST":
         data = request.get_json()
 
-        fullname = data["fullname"]
-        uvaID = data["uvaId"]
+        firstname, lastname = data["fullname"].split()
         email = data["email"]
         password = data["password"]
+        
+        conn = sqlite3.connect('music.sqlite3')
+        cursor = conn.cursor()
 
-        if email in users:
-            return jsonify({"error": "Email already exists"}), 409
+        try:
+            cursor.execute("SELECT Email FROM User WHERE Email = ?", (email,))
+            existing_user = cursor.fetchone()
+            if existing_user:
+                print("1: Email already exists in database")
+                return jsonify({"error": "Email already exists"}), 409
 
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        users[email] = hashed_password
-        save_users()
-        return jsonify({"message": "Signup successful"}), 201
+            if email in users:
+                print("2: Email already exists in JSON file")
+                return jsonify({"error": "Email already exists"}), 409
+
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            users[email] = hashed_password
+            save_users()
+
+            cursor.execute("INSERT INTO User (FirstName, LastName, Email) VALUES (?, ?, ?)", (firstname, lastname, email))
+            
+            conn.commit()
+            session['user'] = email
+            
+            return jsonify({"message": "Signup successful"}), 201
+        except sqlite3.IntegrityError:
+            print("3: Integrity error occurred")
+            return jsonify({"error": "Integrity error occurred"}), 500
+        finally:
+            conn.close()
+    
     return render_template('signup.html')
 
 @app.route('/home', methods=['POST', 'GET'])
 def goHome():
     user = session.get('user')
+    if user is None:
+        return render_template('login.html')
     return render_template('home.html', user=user)
 
-@app.route('/logout')
+@app.route('/welcome')
 def logout():
     session.pop('user', None) 
     return render_template('welcome.html')
@@ -121,16 +145,25 @@ def get_genre_details(genre_id):
     conn.close()
     return genre, songs
 
+def get_user_id(user_email):
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute("SELECT UserID FROM User WHERE Email = ?", (user_email,))
+    user_id = cursor.fetchone()
+    conn.close()
+    return user_id[0] if user_id else None
+
 @app.route('/rate', methods=['GET', 'POST'])
 def rate():
     if request.method == 'POST':
         song_id = request.form['song']
         rating = request.form['rating']
         review = request.form['review']
+        user_id = get_user_id(session['user'])
         
         conn = sqlite3.connect('music.sqlite3')
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Rating (RatingValue, Review, SongID, UserID) VALUES (?, ?, ?, ?)", (rating, review, song_id, 1))
+        cursor.execute("INSERT INTO Rating (RatingValue, Review, SongID, UserID) VALUES (?, ?, ?, ?)", (rating, review, song_id, user_id))
         conn.commit()
         conn.close()
         
@@ -184,6 +217,29 @@ def get_genres():
     genres = cursor.fetchall()
     conn.close()
     return genres
+
+@app.route('/my_ratings')
+def my_ratings():
+    user_id = get_user_id(session['user'])
+    print(user_id)
+    if 'user' not in session:
+        return render_template('login.html')
+    
+    user_ratings = get_user_ratings(session['user'])
+    return render_template('my_ratings.html', user_ratings=user_ratings)
+
+def get_user_ratings(user_email):
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute("SELECT RatingValue FROM Rating WHERE UserID= ?", (user_email,))
+    user_ratings = cursor.fetchall()
+    # get ratings from database
+    r = cursor.execute("SELECT SongID, RatingValue FROM Rating WHERE UserID = ?", (user_email,))
+    ratings = r.fetchall()
+    print("ratings:", ratings)
+    print(users)
+    conn.close()
+    return user_ratings
 
 if __name__ == '__main__':
     app.run(debug=True)
