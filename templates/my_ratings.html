@@ -35,12 +35,12 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
-        a {
-            text-decoration: none;
+        .song-link, .artist-link {
             color: blue;
+            text-decoration: underline;
             font-weight: bold;
         }
-        a:hover {
+        .song-link:hover, .artist-link:hover {
             color: darkblue;
         }
         .footer {
@@ -60,18 +60,22 @@
 <body>
     <div class="container">
         <h1>My Ratings</h1>
-        <ul>
+        {% if user_ratings %}
+            <ul>
             {% for rating in user_ratings %}
                 <li>
-                    <strong>Song:</strong> <a href="{{ url_for('song_detail', song_id=rating[4]) }}">{{ rating[2] }}</a> 
-                    by <a href="{{ url_for('artist_detail', artist_id=rating[5]) }}">{{ rating[3] }}</a> 
+                    <strong>Song:</strong> <a class="song-link" href="{{ url_for('song_detail', song_id=rating[4]) }}">{{ rating[2] }}</a> 
+                    by <a class="artist-link" href="{{ url_for('artist_detail', artist_id=rating[5]) }}">{{ rating[3] }}</a> 
                     <br>
                     <strong>Rating:</strong> {{ rating[0] }}/5 
                     <br>
                     <strong>Review:</strong> {{ rating[1] }}
                 </li>
             {% endfor %}
-        </ul>
+            </ul>
+        {% else %}
+            <p>You have not rated any songs yet.</p>
+        {% endif %}
         <div class="footer">
             <a href="/home">Back to Home</a>
         </div>

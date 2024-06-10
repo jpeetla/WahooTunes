@@ -59,7 +59,7 @@
                 <div class="song-item">
                     <p><strong>Song Title:</strong> <a href="/song/{{ song[0] }}">{{ song[1] }}</a></p>
                     <p><strong>By:</strong> <a href="/artist/{{ song[3] }}">{{ song[4] }}</a></p>
-                    <p class="rating"><strong>Rating:</strong> {{ song[2] }}</p>
+                    <p class="rating"><strong>Rating:</strong> {{ song[2]|round(2) }}</p>
                 </div>
             {% endfor %}
         </div>
