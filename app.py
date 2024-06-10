@@ -172,6 +172,18 @@ def get_artists():
     conn.close()
     return artists
 
+@app.route('/all_genres')
+def all_genres():
+    genres = get_genres()
+    return render_template('all_genres.html', genres=genres)
+
+def get_genres():
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute("SELECT GenreID, Name FROM Genre")
+    genres = cursor.fetchall()
+    conn.close()
+    return genres
 
 if __name__ == '__main__':
     app.run(debug=True)
