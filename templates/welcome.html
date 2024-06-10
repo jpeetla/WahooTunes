@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,16 +15,19 @@
             height: 100vh;
             margin: 0;
         }
+
         .container {
             text-align: center;
             background: white;
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #333;
         }
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -34,21 +38,55 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         button:hover {
             background-color: #45a049;
         }
+
         a {
-            color: white; /* Make text color white */
-            text-decoration: none; /* Remove underline */
-            display: block; /* Make the link fill the button */
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .flash {
+            background-color: #4BB543;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 200px;
+            animation: fadeOut 10s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            70% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
+        {% if message %}
+        <div class="flash">{{ message }}</div>
+        {% endif %}
         <h1>WahooTunes</h1>
         <button><a href="/login">Log In</a></button>
         <button><a href="/signup">Sign Up</a></button>
     </div>
 </body>
+
 </html>

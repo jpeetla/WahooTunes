@@ -53,12 +53,48 @@
             color: #666;
             margin-bottom: 20px;
         }
+        .flash {
+            text-align: center;
+            background-color: #4BB543;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 200px;
+            animation: fadeOut 10s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            70% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Welcome, {{user}}.</h1>
     </header>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     <nav>
         <ul>
             <li><a href="/all_songs">Browse Songs</a></li>

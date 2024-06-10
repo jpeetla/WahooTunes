@@ -47,7 +47,8 @@ def goToLogin():
                 conn.close()
                 print("User added to the database")
                 session['userId'] = get_user_id(email)
-                
+            
+            flash("Login successful", "success")
             return jsonify({"message": "Login successful"}), 200
         else:
             print("Authentication failed...")
@@ -103,8 +104,8 @@ def goHome():
 
 @app.route('/welcome')
 def logout():
-    session.pop('user', None) 
-    return render_template('welcome.html')
+    session.pop('user', None)
+    return render_template('welcome.html', message = "Logout successful")
 
 def get_songs():
     conn = sqlite3.connect('music.sqlite3')
