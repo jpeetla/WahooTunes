@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Reports</title>
+    <title>Generate Reports - WahooTunes</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,26 +20,53 @@
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 600px;
+            width: 400px;
         }
         h1 {
             color: #333;
-        }
-        .content {
-            text-align: center;
-        }
-        .content p {
-            color: #666;
             margin-bottom: 20px;
+        }
+        .report-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        .report-form label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .report-form select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
+        .report-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        .report-form button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Generate Reports</h1>
-        <div class="content">
-            <p>Placeholder for the Reports Page. Here, users will be able to generate and view various reports.</p>
-        </div>
+        <form class="report-form" action="/generate_report" method="POST">
+            <label for="report-type">Select Report Type:</label>
+            <select id="report-type" name="report_type">
+                <option value="most_popular_songs">Popular Songs</option>
+            </select>
+            <button type="submit">Generate Report</button>
+        </form>
     </div>
 </body>
 </html>
