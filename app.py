@@ -280,6 +280,11 @@ def get_user_ratings(user_email):
     conn.close()
     return user_ratings
 
+@app.route('/reports', methods=['GET'])
+def reports():
+    return render_template('reports.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
