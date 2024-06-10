@@ -7,6 +7,7 @@ import pyrebase
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
+app.secret_key = 'wahootunes123'
 
 try:
     with open('users.json', 'r') as f:
@@ -34,6 +35,7 @@ def goToLogin():
         hashed_password = users.get(email)
 
         if hashed_password and bcrypt.check_password_hash(hashed_password, password):
+            session['user'] = email
             return jsonify({"message": "Login successful"}), 200
         else:
             print("Authentication failed...")
@@ -60,7 +62,13 @@ def goToSignUp():
 
 @app.route('/home', methods=['POST', 'GET'])
 def goHome():
-    return render_template('home.html')
+    user = session.get('user')
+    return render_template('home.html', user=user)
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None) 
+    return render_template('welcome.html')
 
 def get_songs():
     conn = sqlite3.connect('music.sqlite3')
@@ -126,7 +134,7 @@ def rate():
         conn.commit()
         conn.close()
         
-        return redirect(url_for('rate'))
+        return render_template('rating.html', message="Rating submitted successfully.")
     
     songs = get_songs()
     return render_template('rating.html', songs=songs)
@@ -145,6 +153,11 @@ def artist_detail(artist_id):
 def genre_detail(genre_id):
     genre, songs = get_genre_details(genre_id)
     return render_template('genre.html', genre_name=genre[0], songs=songs)
+
+@app.route('/all_songs')
+def all_songs():
+    songs = get_songs()
+    return render_template('all_songs.html', songs=songs)
 
 if __name__ == '__main__':
     app.run(debug=True)
