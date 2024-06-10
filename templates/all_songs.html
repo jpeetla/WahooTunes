@@ -7,11 +7,23 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 600px;
         }
         h1 {
-            text-align: center;
+            color: #333;
         }
         ul {
             list-style-type: none;
@@ -19,11 +31,11 @@
             margin: 0;
         }
         li {
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-        }
-        li:last-child {
-            border-bottom: none;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
         a {
             text-decoration: none;
@@ -36,24 +48,28 @@
         .footer {
             text-align: center;
             margin-top: 20px;
-            position: fixed;
-            bottom: 10;
-            left: 0;
-            right: 0;
+        }
+        .footer a {
+            color: blue;
+            text-decoration: underline;
+            font-weight: normal;
+        }
+        .footer a:hover {
+            color: darkblue;
         }
     </style>
 </head>
 <body>
-    <h1>All Songs</h1>
-    <ul>
-        {% for song in songs %}
-        <li><a href="/song/{{ song[0] }}">{{ song[1] }}</a></li>
-        {% endfor %}
-    </ul>
-    
-    <div class="footer">
-        <a href="/home">Back to Home</a>
+    <div class="container">
+        <h1>All Songs</h1>
+        <ul>
+            {% for song in songs %}
+            <li><a href="/song/{{ song[0] }}">{{ song[1] }}</a></li>
+            {% endfor %}
+        </ul>
+        <div class="footer">
+            <a href="/home">Back to Home</a>
+        </div>
     </div>
 </body>
-
 </html>
