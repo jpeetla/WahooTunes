@@ -159,6 +159,20 @@ def all_songs():
     songs = get_songs()
     return render_template('all_songs.html', songs=songs)
 
+@app.route('/all_artists')
+def all_artists():
+    artists = get_artists()
+    return render_template('all_artists.html', artists=artists)
+
+def get_artists():
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute("SELECT ArtistID, StageName FROM Artist")
+    artists = cursor.fetchall()
+    conn.close()
+    return artists
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
