@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, jsonify
+from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_bcrypt import Bcrypt
 import json
 import sqlite3
@@ -33,9 +33,21 @@ def goToLogin():
         email = data["email"]
         password = data["password"]
         hashed_password = users.get(email)
+        userId = get_user_id(email)
 
         if hashed_password and bcrypt.check_password_hash(hashed_password, password):
             session['user'] = email
+            session['userId'] = userId
+            
+            if userId is None:
+                conn = sqlite3.connect('music.sqlite3')
+                cursor = conn.cursor()
+                cursor.execute("INSERT INTO User (Email) VALUES (?)", (email,))
+                conn.commit()
+                conn.close()
+                print("User added to the database")
+                session['userId'] = get_user_id(email)
+                
             return jsonify({"message": "Login successful"}), 200
         else:
             print("Authentication failed...")
@@ -169,17 +181,30 @@ def rate():
         rating = request.form['rating']
         review = request.form['review']
         user_id = get_user_id(session['user'])
-        
+
+        if has_user_rated_song(user_id, song_id):
+            flash("You have already rated this song", "fail")
+            return redirect('/rate')
+
         conn = sqlite3.connect('music.sqlite3')
         cursor = conn.cursor()
         cursor.execute("INSERT INTO Rating (RatingValue, Review, SongID, UserID) VALUES (?, ?, ?, ?)", (rating, review, song_id, user_id))
         conn.commit()
         conn.close()
-        
-        return render_template('rating.html', message="Rating submitted successfully.")
-    
+
+        flash("Rating added successfully", "success")
+
     songs = get_songs()
     return render_template('rating.html', songs=songs)
+
+def has_user_rated_song(user_id, song_id):
+        conn = sqlite3.connect('music.sqlite3')
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM Rating WHERE UserID = ? AND SongID = ?", (user_id, song_id))
+        count = cursor.fetchone()[0]
+        conn.close()
+        return count > 0
+
 
 @app.route('/song/<int:song_id>', methods=['GET'])
 def song_detail(song_id):
@@ -229,8 +254,7 @@ def get_genres():
 
 @app.route('/my_ratings')
 def my_ratings():
-    user_id = get_user_id(session['user'])
-    print(user_id)
+    print(session)
     if 'user' not in session:
         return render_template('login.html')
     
