@@ -8,11 +8,12 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh; 
         }
         .container {
             text-align: center;
@@ -20,7 +21,9 @@
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 400px;
+            width: 90%; 
+            max-width: 900px; 
+            min-height: 80vh; 
         }
         h1 {
             color: #333;
@@ -31,13 +34,16 @@
         }
         .ratings {
             margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            grid-gap: 20px; 
         }
         .rating-item {
             background-color: #f9f9f9;
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 15px; 
             border-radius: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
