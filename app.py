@@ -57,11 +57,11 @@ def goToSignUp():
             cursor.execute("SELECT Email FROM User WHERE Email = ?", (email,))
             existing_user = cursor.fetchone()
             if existing_user:
-                print("1: Email already exists in database")
+                # print("1: Email already exists in database")
                 return jsonify({"error": "Email already exists"}), 409
 
             if email in users:
-                print("2: Email already exists in JSON file")
+                # print("2: Email already exists in JSON file")
                 return jsonify({"error": "Email already exists"}), 409
 
             hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -75,7 +75,7 @@ def goToSignUp():
             
             return jsonify({"message": "Signup successful"}), 201
         except sqlite3.IntegrityError:
-            print("3: Integrity error occurred")
+            # print("3: Integrity error occurred")
             return jsonify({"error": "Integrity error occurred"}), 500
         finally:
             conn.close()
@@ -229,15 +229,21 @@ def my_ratings():
     return render_template('my_ratings.html', user_ratings=user_ratings)
 
 def get_user_ratings(user_email):
+    user_id = get_user_id(user_email)
+    if not user_id:
+        return []
+    
     conn = sqlite3.connect('music.sqlite3')
     cursor = conn.cursor()
-    cursor.execute("SELECT RatingValue FROM Rating WHERE UserID= ?", (user_email,))
+    cursor.execute("""
+        SELECT Rating.RatingValue, Rating.Review, Song.SongTitle, Artist.StageName, Song.SongID, Artist.ArtistID
+        FROM Rating
+        JOIN Song ON Rating.SongID = Song.SongID
+        JOIN SongArtist ON Song.SongID = SongArtist.SongID
+        JOIN Artist ON SongArtist.ArtistID = Artist.ArtistID
+        WHERE Rating.UserID = ?
+    """, (user_id,))
     user_ratings = cursor.fetchall()
-    # get ratings from database
-    r = cursor.execute("SELECT SongID, RatingValue FROM Rating WHERE UserID = ?", (user_email,))
-    ratings = r.fetchall()
-    print("ratings:", ratings)
-    print(users)
     conn.close()
     return user_ratings
 

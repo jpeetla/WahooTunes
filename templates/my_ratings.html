@@ -1,16 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Ratings</title>
 </head>
 <body>
     <h1>My Ratings</h1>
-    <ul>
+    {% if user_ratings %}
+        <ul>
         {% for rating in user_ratings %}
-            <li>{{ rating }}</li>
+            <li>
+                <strong>Song:</strong> <a href="{{ url_for('song_detail', song_id=rating[4]) }}">{{ rating[2] }}</a> 
+                by <a href="{{ url_for('artist_detail', artist_id=rating[5]) }}">{{ rating[3] }}</a> 
+                <br>
+                <strong>Rating:</strong> {{ rating[0] }}/5 
+                <br>
+                <strong>Review:</strong> {{ rating[1] }}
+            </li>
         {% endfor %}
-    </ul>
+        </ul>
+    {% else %}
+        <p>You have not rated any songs yet.</p>
+    {% endif %}
 </body>
 </html>
