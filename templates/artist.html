@@ -56,11 +56,12 @@
             <h2>Songs</h2>
             {% for song in songs %}
                 <div class="song-item">
-                    <p class="song-title">{{ song.SongTitle }}</p>
-                    <p><strong>Rating:</strong> {{ song.AvgRating }}</p>
+                    <p><strong>Song Title:</strong> {{ song[0] }}</p>
+                    <p><strong>Average Rating:</strong> {{ song[1] }}</p>
                 </div>
             {% endfor %}
         </div>
+        <a href="/all_artists" class="back-btn">Back to Artists</a>
     </div>
 </body>
 </html>
