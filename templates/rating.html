@@ -61,7 +61,7 @@
             <label for="song">Select Song:</label>
             <select id="song" name="song" required>
                 {% for song in songs %}
-                    <option value="{{ song[0] }}">{{ song[1] }}</option>
+                    <option value="{{ song[0] }}">{{ song[1] }} by {{ song[2] }}</option>
                 {% endfor %}
             </select>
             <label for="rating">Rating:</label>

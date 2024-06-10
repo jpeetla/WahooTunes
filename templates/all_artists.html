@@ -6,31 +6,31 @@
     <title>All Artists</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            width: 600px;
-        }
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 20px auto; /* Center the container horizontally and add top margin */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
         h1 {
             color: #333;
         }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
+        .artist-column {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
         }
-        li {
+        .artist-item {
+            width: calc(30% - 20px);
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             padding: 10px;
@@ -57,19 +57,46 @@
         .footer a:hover {
             color: darkblue;
         }
+        input[type="text"] {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>All Artists</h1>
-        <ul>
+        <input type="text" id="searchInput" placeholder="Search artists...">
+        <div class="artist-column">
             {% for artist in artists %}
-            <li><a href="/artist/{{ artist[0] }}">{{ artist[1] }}</a></li>
+            <div class="artist-item"><a href="/artist/{{ artist[0] }}">{{ artist[1] }}</a></div>
             {% endfor %}
-        </ul>
+        </div>
         <div class="footer">
             <a href="/home">Back to Home</a>
         </div>
     </div>
+
+    <script>
+        document.getElementById("searchInput").addEventListener("keyup", function() {
+            var input, filter, artistItems, a, i, txtValue;
+            input = document.getElementById('searchInput');
+            filter = input.value.toUpperCase();
+            artistItems = document.getElementsByClassName("artist-item");
+
+            for (i = 0; i < artistItems.length; i++) {
+                a = artistItems[i].getElementsByTagName("a")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    artistItems[i].style.display = "";
+                } else {
+                    artistItems[i].style.display = "none";
+                }
+            }
+        });
+    </script>
 </body>
 </html>
