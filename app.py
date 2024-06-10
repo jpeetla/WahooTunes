@@ -105,7 +105,14 @@ def get_songs():
 def get_song_details(song_id):
     conn = sqlite3.connect('music.sqlite3')
     cursor = conn.cursor()
-    cursor.execute("SELECT SongTitle, GenreID, (SELECT Name FROM Genre WHERE GenreID = Song.GenreID) as Genre, (SELECT StageName FROM Artist WHERE ArtistID = (SELECT ArtistID FROM SongArtist WHERE SongID = ?)) as Artist, SongLength FROM Song WHERE SongID = ?", (song_id, song_id))
+    cursor.execute("""
+        SELECT SongID, SongTitle, GenreID, 
+               (SELECT Name FROM Genre WHERE GenreID = Song.GenreID) as Genre, 
+               (SELECT StageName FROM Artist WHERE ArtistID = (SELECT ArtistID FROM SongArtist WHERE SongID = ?)) as Artist, 
+               SongLength, 
+               (SELECT ArtistID FROM Artist WHERE ArtistID = (SELECT ArtistID FROM SongArtist WHERE SongID = ?)) as ArtistID
+        FROM Song 
+        WHERE SongID = ?""", (song_id, song_id, song_id))
     song = cursor.fetchone()
     cursor.execute("SELECT RatingValue, Review, (SELECT Email FROM User WHERE UserID = Rating.UserID) as User FROM Rating WHERE SongID = ?", (song_id,))
     ratings = cursor.fetchall()
@@ -118,7 +125,7 @@ def get_artist_details(artist_id):
     cursor.execute("SELECT StageName, RealName, PhoneNumber FROM Artist WHERE ArtistID = ?", (artist_id,))
     artist = cursor.fetchone()
     cursor.execute("""
-        SELECT Song.SongTitle, IFNULL(AVG(Rating.RatingValue), 'No ratings yet') as AvgRating
+        SELECT Song.SongID, Song.SongTitle, IFNULL(AVG(Rating.RatingValue), 'No ratings yet') as AvgRating
         FROM Song
         JOIN SongArtist ON Song.SongID = SongArtist.SongID
         LEFT JOIN Rating ON Song.SongID = Rating.SongID
@@ -135,9 +142,11 @@ def get_genre_details(genre_id):
     cursor.execute("SELECT Name FROM Genre WHERE GenreID = ?", (genre_id,))
     genre = cursor.fetchone()
     cursor.execute("""
-        SELECT Song.SongTitle, IFNULL(AVG(Rating.RatingValue), 'No ratings yet') as AvgRating
+        SELECT Song.SongID, Song.SongTitle, IFNULL(AVG(Rating.RatingValue), 'No ratings yet') as AvgRating, Artist.ArtistID, Artist.StageName
         FROM Song
         LEFT JOIN Rating ON Song.SongID = Rating.SongID
+        JOIN SongArtist ON Song.SongID = SongArtist.SongID
+        JOIN Artist ON SongArtist.ArtistID = Artist.ArtistID
         WHERE Song.GenreID = ?
         GROUP BY Song.SongID, Song.SongTitle
     """, (genre_id,))
@@ -175,12 +184,12 @@ def rate():
 @app.route('/song/<int:song_id>', methods=['GET'])
 def song_detail(song_id):
     song, ratings = get_song_details(song_id)
-    return render_template('song_detail.html', song_title=song[0], genre=song[2], artist=song[3], song_length=song[4], ratings=ratings)
+    return render_template('song_detail.html', song_id=song_id, song_title=song[1], genre=song[3], artist=song[4], song_length=song[5], ratings=ratings, artist_id=song[6])
 
 @app.route('/artist/<int:artist_id>', methods=['GET'])
 def artist_detail(artist_id):
     artist, songs = get_artist_details(artist_id)
-    return render_template('artist.html', artist_name=artist[0], real_name=artist[1], phone_number=artist[2], songs=songs)
+    return render_template('artist.html', artist_name=artist[0], real_name=artist[1], phone_number=artist[2], songs=songs, artist_id=str(artist_id))
 
 @app.route('/genre/<int:genre_id>', methods=['GET'])
 def genre_detail(genre_id):

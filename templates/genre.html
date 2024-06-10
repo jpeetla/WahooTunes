@@ -42,7 +42,7 @@
         .song-title {
             font-weight: bold;
         }
-        .rating {
+        .artist-name {
             color: #555;
         }
     </style>
@@ -57,13 +57,15 @@
             <h2>Songs in this Genre</h2>
             {% for song in songs %}
                 <div class="song-item">
-                    <p class="song-title">{{ song[0] }}</p>
-                    <p class="rating"><strong>Rating:</strong> {{ song[1] }}</p>
+                    <p><strong>Song Title:</strong> <a href="/song/{{ song[0] }}">{{ song[1] }}</a></p>
+                    <p><strong>By:</strong> <a href="/artist/{{ song[3] }}">{{ song[4] }}</a></p>
+                    <p class="rating"><strong>Rating:</strong> {{ song[2] }}</p>
                 </div>
             {% endfor %}
         </div>
         <a href="/all_genres" class="back-btn">Back to Genres</a>
-    </div>
+        <br>
+        <a href="/home" class="back-btn">Back to Home</a>
     </div>
 </body>
 </html>
