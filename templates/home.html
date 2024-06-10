@@ -65,20 +65,25 @@
             width: 200px;
             animation: fadeOut 10s forwards;
         }
-
         @keyframes fadeOut {
             0% {
                 opacity: 1;
             }
-
             70% {
                 opacity: 1;
             }
-
             100% {
                 opacity: 0;
                 display: none;
             }
+        }
+        #map {
+            position: relative;
+            top: 30px;
+            height: 600px;
+            width: 90%;
+            border-radius: 10px;
+            margin:auto
         }
     </style>
 </head>
@@ -113,6 +118,39 @@
         <p>Share your thoughts on your favorite songs and artists. </p>
         <h2>Upcoming Events</h2>
         <p>Stay tuned for exciting music events happening near you.</p>
+        <div id="map"></div>
     </section>
+    <script>
+        function initMap() {
+            var locations = [
+                // test location
+                // TODO: get data from database, convert address to lat/lng
+                {lat: 38.03366, lng: -78.50574, info: 'Event 1: Music Concert at UVA Amp'},
+            ];
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 38.03368131357104, lng: -78.50749192362088}, // Cville
+                zoom: 12.5
+            });
+
+            locations.forEach(function(location) {
+                var marker = new google.maps.Marker({
+                    position: {lat: location.lat, lng: location.lng},
+                    map: map,
+                    title: location.info
+                });
+
+                var infoWindow = new google.maps.InfoWindow({
+                    content: location.info
+                });
+
+                marker.addListener('click', function() {
+                    infoWindow.open(map, marker);
+                });
+            });
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap" async defer></script>
 </body>
 </html>
+

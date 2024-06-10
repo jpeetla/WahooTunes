@@ -1,13 +1,15 @@
 from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_bcrypt import Bcrypt
+from dotenv import load_dotenv
+import os
 import json
 import sqlite3
-import pyrebase
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-app.secret_key = 'wahootunes123'
+load_dotenv()
+app.secret_key = 'appkey'
 
 try:
     with open('users.json', 'r') as f:
@@ -96,10 +98,20 @@ def goToSignUp():
 
 @app.route('/home', methods=['POST', 'GET'])
 def goHome():
+    # venues = get_venues()
+    # geocoded_venues = []
+    # for venue in venues:
+    #     name, street, city, state = venue
+    #     lat, lng = geocode_address(street, city, state)
+    #     if lat and lng:
+    #         geocoded_venues.append((name, lat, lng))
     user = session.get('user')
+    google_maps_api_key = os.getenv('GOOGLE_MAPS_API_KEY')
+    print("API KEY: ", google_maps_api_key)
     if user is None:
         return render_template('login.html')
-    return render_template('home.html', user=user)
+    return render_template('home.html', user=user, api_key = google_maps_api_key)
+
 
 @app.route('/welcome')
 def logout():
@@ -302,6 +314,25 @@ def generate_report():
         results = cursor.fetchall()
         conn.close()
         return render_template('most_popular_songs.html', results=results)
+
+def get_venues():
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+    cursor.execute('SELECT VenueName, VenueStreet, VenueCity, VenueState FROM Venue')
+    venues = cursor.fetchall()
+    conn.close()
+    return venues
+
+def geocode_address(street, city, state):
+    address = f"{street}, {city}, {state}"
+    api_key = os.getenv('GOOGLE_MAPS_API_KEY')
+    geocode_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={api_key}"
+    response = requests.get(geocode_url)
+    geocode_data = response.json()
+    if geocode_data['status'] == 'OK':
+        location = geocode_data['results'][0]['geometry']['location']
+        return location['lat'], location['lng']
+    return None, None
 
 if __name__ == '__main__':
     app.run(debug=True)
