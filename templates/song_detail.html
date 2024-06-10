@@ -54,9 +54,9 @@
             <h2>Ratings</h2>
             {% for rating in ratings %}
                 <div class="rating-item">
-                    <p><strong>Rating:</strong> {{ rating.RatingValue }}</p>
-                    <p><strong>Review:</strong> {{ rating.Review }}</p>
-                    <p><strong>User:</strong> {{ rating.User }}</p>
+                    <p><strong>Rating:</strong> {{ rating[0] }}</p>
+                    <p><strong>Review:</strong> {{ rating[1] }}</p>
+                    <p><strong>User:</strong> {{ rating[2] }}</p>
                 </div>
             {% endfor %}
         </div>
