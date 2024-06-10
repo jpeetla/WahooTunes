@@ -51,6 +51,35 @@
             text-decoration: none; /* Remove underline */
             display: block; /* Make the link fill the button */
         }
+        #flash-messages {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 200px;
+        }
+        .flash-message {
+            background-color: #4BB543;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 5px;
+            animation: fadeOut 8s forwards;
+        }
+        .flash-fail {
+            background-color: #FF6347;
+        }
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -62,8 +91,16 @@
             <button type="submit">Log In</button>
         </form>
     </div>
-</body>
-<script>
+    <div id="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
             var form = document.querySelector("form");
             form.addEventListener("submit", function(e) {
@@ -79,13 +116,26 @@
                     },
                     body: JSON.stringify(userData)
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (response.status === 200) {
+                        window.location.href = '/home'; // Redirect on success
+                    } else {
+                        return response.json();
+                    }
+                })
                 .then(data => {
-                    console.log(data); // Handle the response data
-                    window.location.href = '/home'; // Redirect on success
+                    if (data && data.message) {
+                        // Display flash message
+                        var flashMessagesDiv = document.getElementById('flash-messages');
+                        var flashMessage = document.createElement('div');
+                        flashMessage.className = 'flash-message flash-fail';
+                        flashMessage.textContent = data.message;
+                        flashMessagesDiv.appendChild(flashMessage);
+                    }
                 })
                 .catch(error => console.error('Error:', error));
             });
         });
-  </script>
+    </script>
+</body>
 </html>

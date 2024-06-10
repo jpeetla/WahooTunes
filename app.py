@@ -38,20 +38,19 @@ def goToLogin():
         if hashed_password and bcrypt.check_password_hash(hashed_password, password):
             session['user'] = email
             session['userId'] = userId
-            
+
             if userId is None:
                 conn = sqlite3.connect('music.sqlite3')
                 cursor = conn.cursor()
                 cursor.execute("INSERT INTO User (Email) VALUES (?)", (email,))
                 conn.commit()
                 conn.close()
-                print("User added to the database")
                 session['userId'] = get_user_id(email)
-            
+
             flash("Login successful", "success")
             return jsonify({"message": "Login successful"}), 200
         else:
-            print("Authentication failed...")
+            return jsonify({"message": "Authentication failed. Check your email and password again."}), 401
     return render_template('login.html')
 
 @app.route("/signup", methods=['POST', 'GET'])
