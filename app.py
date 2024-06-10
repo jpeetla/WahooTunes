@@ -97,7 +97,7 @@ def logout():
 def get_songs():
     conn = sqlite3.connect('music.sqlite3')
     cursor = conn.cursor()
-    cursor.execute("SELECT SongID, SongTitle FROM Song")
+    cursor.execute("SELECT Song.SongID, Song.SongTitle, Artist.StageName FROM Song JOIN SongArtist ON Song.SongID = SongArtist.SongID JOIN Artist ON SongArtist.ArtistID = Artist.ArtistID")
     songs = cursor.fetchall()
     conn.close()
     return songs
