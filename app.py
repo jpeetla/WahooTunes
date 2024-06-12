@@ -16,7 +16,7 @@ load_dotenv()
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-app.secret_key = os.getenv('appkey')
+app.secret_key = "wahootunes123"
 
 app.register_blueprint(auth)
 app.register_blueprint(songs)
