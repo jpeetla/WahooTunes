@@ -131,3 +131,111 @@ def geocode_address(street, city, state):
         location = geocode_data['results'][0]['geometry']['location']
         return location['lat'], location['lng']
     return None, None
+
+def get_ratings_with_5_stars():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT Song.SongTitle, Rating.RatingValue, Rating.Review 
+    FROM Rating 
+    INNER JOIN Song ON Rating.SongID = Song.SongID 
+    WHERE RatingValue = 5;
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result
+
+def get_vip_event_attendees():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT Event.Name AS EventName, User.FirstName, User.LastName 
+    FROM EventAttendee 
+    INNER JOIN Event ON EventAttendee.EventID = Event.EventID 
+    INNER JOIN User ON EventAttendee.UserID = User.UserID 
+    WHERE TicketType = 'VIP';
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result
+
+def get_songs_per_genre():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT Genre.Name, COUNT(Song.SongID) AS SongCount 
+    FROM Genre 
+    LEFT JOIN Song ON Genre.GenreID = Song.GenreID 
+    GROUP BY Genre.Name;
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result
+
+def get_avg_rating_per_song():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT Song.SongTitle, AVG(Rating.RatingValue) AS AvgRating 
+    FROM Song 
+    LEFT JOIN Rating ON Song.SongID = Rating.SongID 
+    GROUP BY Song.SongTitle;
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result
+
+def get_user_rating_details():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT User.FirstName, User.LastName, Song.SongTitle, Rating.RatingValue, Rating.Review 
+    FROM User 
+    INNER JOIN Rating ON User.UserID = Rating.UserID 
+    INNER JOIN Song ON Rating.SongID = Song.SongID;
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result
+
+def get_genre_song_details():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT Genre.Name AS Genre, Song.SongTitle, Song.SongLength 
+    FROM Genre 
+    INNER JOIN Song ON Genre.GenreID = Song.GenreID;
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result
+
+def get_song_artist_details():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT Song.SongTitle, Artist.StageName 
+    FROM SongArtist 
+    INNER JOIN Song ON SongArtist.SongID = Song.SongID 
+    INNER JOIN Artist ON SongArtist.ArtistID = Artist.ArtistID;
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result
+
+def get_event_venue_details():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT Event.Name AS EventName, Venue.VenueName, Venue.VenueCity, Venue.VenueState 
+    FROM EventVenue 
+    INNER JOIN Event ON EventVenue.EventID = Event.EventID 
+    INNER JOIN Venue ON EventVenue.VenueID = Venue.VenueID;
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result
+
+def get_event_attendee_details():
+    conn = sqlite3.connect('music.sqlite3')
+    query = """
+    SELECT Event.Name AS EventName, User.FirstName, User.LastName, EventAttendee.RegistrationDate, EventAttendee.TicketType 
+    FROM EventAttendee 
+    INNER JOIN Event ON EventAttendee.EventID = Event.EventID 
+    INNER JOIN User ON EventAttendee.UserID = User.UserID;
+    """
+    result = conn.execute(query).fetchall()
+    conn.close()
+    return result

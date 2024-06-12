@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Reports - WahooTunes</title>
+    <title>Generate Reports</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,10 +63,22 @@
         <form class="report-form" action="/generate_report" method="POST">
             <label for="report-type">Select Report Type:</label>
             <select id="report-type" name="report_type">
-                <option value="most_popular_songs">Popular Songs</option>
+                <option value="most_popular_songs">Most Popular Songs</option>
+                <option value="ratings_5_stars">Ratings with 5 Stars</option>
+                <option value="vip_event_attendees">VIP Event Attendees</option>
+                <option value="songs_per_genre">Songs per Genre</option>
+                <option value="avg_rating_per_song">Average Rating per Song</option>
+                <option value="user_rating_details">User Rating Details</option>
+                <option value="genre_song_details">Genre Song Details</option>
+                <option value="song_artist_details">Song Artist Details</option>
+                <option value="event_venue_details">Event Venue Details</option>
+                <option value="event_attendee_details">Event Attendee Details</option>
             </select>
             <button type="submit">Generate Report</button>
         </form>
+        <div class="back-buttons">
+            <a href="/">Back to Home</a>
+        </div>
     </div>
 </body>
 </html>
