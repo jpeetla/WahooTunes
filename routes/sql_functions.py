@@ -169,7 +169,7 @@ def get_songs_per_genre():
     conn.close()
     return result
 
-def get_avg_rating_per_song():
+def get_average_rating_per_song():
     conn = sqlite3.connect('music.sqlite3')
     query = """
     SELECT Song.SongTitle, AVG(Rating.RatingValue) AS AvgRating 

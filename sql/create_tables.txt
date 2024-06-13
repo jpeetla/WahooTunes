@@ -16,11 +16,10 @@ CREATE TABLE Song (
     FOREIGN KEY (GenreID) REFERENCES Genre(GenreID)
 );
 CREATE TABLE SongArtist (
-    SongArtistID INTEGER PRIMARY KEY,
     SongID INTEGER,
     ArtistID INTEGER,
-    FOREIGN KEY (SongID) REFERENCES Song(SongID),
-    FOREIGN KEY (ArtistID) REFERENCES Artist(ArtistID)
+    PRIMARY KEY (SongID, ArtistID)
+
 );
 
 CREATE TABLE Rating (
@@ -51,11 +50,10 @@ CREATE TABLE Venue (
     PhoneNumber TEXT
 );
 CREATE TABLE EventVenue (
-    EventVenueID INTEGER PRIMARY KEY,
     VenueID INTEGER,
     EventID INTEGER,
-    FOREIGN KEY (VenueID) REFERENCES Venue(VenueID),
-    FOREIGN KEY (EventID) REFERENCES Event(EventID)
+    PRIMARY KEY (VenueID, EventID)
+
 );
 CREATE TABLE Event (
     EventID INTEGER PRIMARY KEY,

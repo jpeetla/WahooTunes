@@ -11,7 +11,7 @@ report_queries = {
         GROUP BY Song.SongID
         ORDER BY AvgRating DESC
     """,
-    'ratings_5_stars': """
+    'ratings_with_5_stars': """
         SELECT Song.SongTitle, Rating.RatingValue, Rating.Review 
         FROM Rating 
         INNER JOIN Song ON Rating.SongID = Song.SongID 
@@ -30,7 +30,7 @@ report_queries = {
         LEFT JOIN Song ON Genre.GenreID = Song.GenreID 
         GROUP BY Genre.Name;
     """,
-    'avg_rating_per_song': """
+    'average_rating_per_song': """
         SELECT Song.SongTitle, AVG(Rating.RatingValue) AS AvgRating 
         FROM Song 
         LEFT JOIN Rating ON Song.SongID = Rating.SongID 
