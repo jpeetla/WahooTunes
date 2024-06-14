@@ -7,6 +7,7 @@ from routes.artist_routes import artists
 from routes.genre_routes import genres
 from routes.rating_routes import ratings
 from routes.report_routes import reports_bp
+from routes.eventvenue_routes import eventvenues
 
 from dotenv import load_dotenv
 import os
@@ -24,6 +25,7 @@ app.register_blueprint(artists)
 app.register_blueprint(genres)
 app.register_blueprint(ratings)
 app.register_blueprint(reports_bp)
+app.register_blueprint(eventvenues)
 
 @app.route("/")
 def hello():
