@@ -181,10 +181,10 @@ class DatabaseManager:
 
         insert_events_sql = """
         INSERT INTO Event (Name, Date, ContactFirstName, ContactLastName, CPPhoneNumber) VALUES 
-        ('Rap Concert', '2025-02-01', 'John', 'Doe', '1234567890'),
-        ('Pop Concert', '2025-02-02', 'Jane', 'Doe', '0987654321'),
-        ('Jazz Concert', '2025-02-03', 'John', 'Doe', '1234567890'),
-        ('Rock Concert', '2025-02-04', 'Jane', 'Doe', '0987654321');
+        ('Rap Concert featuring Drake', '2025-02-01', 'John', 'Doe', '1234567890'),
+        ('Pop Concert featuring Beyonce', '2025-02-02', 'Jane', 'Doe', '0987654321'),
+        ('Jazz Concert featuring Louis Armstrong', '2025-02-03', 'John', 'Doe', '1234567890'),
+        ('Classical Concert featuring Mozart', '2025-02-04', 'Jane', 'Doe', '0987654321');
         """
 
         try:
@@ -212,13 +212,81 @@ class DatabaseManager:
             if 'cursor' in locals() and cursor:
                 cursor.close()
                 
+
+    def clear_event_attendees(self):
+            self.check_connection()
+
+            try:
+                cursor = self.connection.cursor()
+                cursor.execute("DELETE FROM EventAttendee;")
+                self.connection.commit()
+                print("EventAttendee table cleared successfully.")
+                return True
+
+            except sqlite3.Error as e:
+                print("Failed to clear EventAttendee table:", e)
+                self.connection.rollback()
+                return False
+
+            finally:
+                if 'cursor' in locals() and cursor:
+                    cursor.close()
+                    
+
+    def insert_event_attendees(self):
+        self.check_connection()
+
+        event_attendees = [
+    ('2025-02-01', 'VIP', 1, 1),    # EventID 1, User ID 1 
+    ('2025-02-01', 'General', 1, 2),# EventID 1, User ID 2 
+    ('2025-02-01', 'General', 1, 3),# EventID 1, User ID 3 
+    ('2025-02-01', 'General', 1, 4),# EventID 1, User ID 4 
+    ('2025-02-01', 'General', 1, 5),# EventID 1, User ID 5 
+    
+    ('2025-02-02', 'VIP', 2, 1),    # EventID 2, User ID 1 
+    ('2025-02-02', 'General', 2, 2),# EventID 2, User ID 2 
+    ('2025-02-02', 'General', 2, 3),# EventID 2, User ID 3 
+    ('2025-02-02', 'General', 2, 4),# EventID 2, User ID 4 
+    ('2025-02-02', 'General', 2, 5),# EventID 2, User ID 5 
+    
+    ('2025-02-03', 'VIP', 3, 1),    # EventID 3, User ID 1 
+    ('2025-02-03', 'General', 3, 2),# EventID 3, User ID 2 
+    ('2025-02-03', 'General', 3, 3),# EventID 3, User ID 3 
+    ('2025-02-03', 'General', 3, 4),# EventID 3, User ID 4 
+    ('2025-02-03', 'General', 3, 5),# EventID 3, User ID 5 
+    
+    ('2025-02-04', 'VIP', 4, 1),    # EventID 4, User ID 1 
+    ('2025-02-04', 'General', 4, 2),# EventID 4, User ID 2 
+    ('2025-02-04', 'General', 4, 3),# EventID 4, User ID 3 
+    ('2025-02-04', 'General', 4, 4),# EventID 4, User ID 4 
+    ('2025-02-04', 'General', 4, 5),# EventID 4, User ID 5 
+]
+
+        try:
+            cursor = self.connection.cursor()
+            cursor.executemany('''
+                INSERT INTO EventAttendee (RegistrationDate, TicketType, EventID, UserID)
+                VALUES (?, ?, ?, ?)
+            ''', event_attendees)
+
+            self.connection.commit()
+            print("EventAttendees inserted successfully.")
+            return True
+
+        except sqlite3.Error as e:
+            print("Failed to insert EventAttendees:", e)
+            self.connection.rollback()
+            return False
+
+        finally:
+            if 'cursor' in locals() and cursor:
+                cursor.close()
+
+                
 if __name__ == "__main__":
     db_manager = DatabaseManager("music.sqlite3")
     db_manager.connect()
-    db_manager.clear_venue_table()
-    venue_ids = db_manager.insert_venue_data()
-    db_manager.clear_event_venue_data()
-    db_manager.clear_event_data()
-    db_manager.insert_event_data(venue_ids)
+    db_manager.clear_event_attendees()
+    db_manager.insert_event_attendees()
 
     db_manager.connection.close()
