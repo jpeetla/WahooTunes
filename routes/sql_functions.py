@@ -240,3 +240,44 @@ def get_event_attendee_details():
     conn.close()
     return result
 
+
+def get_user_reg(user_email):
+    user_id = get_user_id(user_email)
+    if not user_id:
+        return []
+
+    conn = sqlite3.connect('music.sqlite3')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT Event.Name, Event.Date, EventAttendee.TicketType, EventAttendee.RegistrationDate,
+               Venue.VenueName, Venue.VenueStreet, Venue.VenueCity, Venue.VenueState, Venue.VenueZipCode
+        FROM Event
+        JOIN EventAttendee ON Event.EventID = EventAttendee.EventID
+        JOIN EventVenue ON Event.EventID = EventVenue.EventID
+        JOIN Venue ON EventVenue.VenueID = Venue.VenueID
+        WHERE EventAttendee.UserID = ?
+    """, (user_id,))
+
+    user_registrations = cursor.fetchall()
+    conn.close()
+
+    registrations_data = []
+    for registration in user_registrations:
+        event_name, event_date, ticket_type, registration_date, \
+        venue_name, venue_street, venue_city, venue_state, venue_zipcode = registration
+
+        registration_info = {
+            'EventName': event_name,
+            'TicketType': ticket_type,
+            'RegistrationDate': registration_date,
+            'VenueName': venue_name,
+            'VenueStreet': venue_street,
+            'VenueCity': venue_city,
+            'VenueState': venue_state,
+            'VenueZipCode': venue_zipcode
+        }
+        registrations_data.append(registration_info)
+
+    return registrations_data
+

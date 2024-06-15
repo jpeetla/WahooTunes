@@ -5,6 +5,7 @@ import requests
 from urllib.parse import quote
 import sqlite3
 import datetime
+from .sql_functions import get_user_reg
 
 eventvenues = Blueprint('eventvenues', __name__)
 
@@ -238,3 +239,15 @@ def events():
         print("Error fetching event data:", e)
         conn.close()
         return jsonify({'error': 'Database error.'}), 500
+
+@eventvenues.route('/my_registrations')
+def my_registrations():
+    if 'user' not in session:
+        return render_template('login.html')
+    
+    user_registrations = get_user_reg(session['user'])
+    print(user_registrations)
+    events_data = get_events()
+    
+    return render_template('my_registrations.html', user_registrations=user_registrations, events=events_data)
+
