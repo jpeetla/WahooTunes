@@ -1,10 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Events!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+
+        .event {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .event h3 {
+            margin-top: 0;
+        }
+
+        .event p {
+            margin-bottom: 5px;
+        }
+
+        form {
+            margin-top: 10px;
+            /* Adjusted margin */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        form select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        form button {
+            padding: 8px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: opacity 0.5s ease-out;
+            /* Fade out transition */
+        }
+
+        .alert-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .alert-error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .alert-warning {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
 </head>
+
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <h1>Upcoming Events</h1>
+
+    <!-- User Details Section -->
+    <div>
+        <form id="user-details-form">
+            <label>Your Name: {{ user_first_name }} {{ user_last_name }}</label>
+            <label>Email: {{ email }}</label>
+        </form>
+    </div>
+    <br>
+    <!-- Event listing -->
+    <div id="events-list">
+        {% for event in events %}
+        <div class="event">
+            <h3>{{ event['name'] }}</h3>
+            <p>Date: {{ event['date'] }}</p>
+            <p>Organizer: {{ event['contact_first_name'] }} {{ event['contact_last_name'] }}</p>
+
+            <form class="event-registration-form" action="/events" method="POST">
+                <input type="hidden" name="event_id" value="{{ event['event_id'] }}" required>
+                <input type="hidden" name="event_name" value="{{ event['name'] }}" readonly required>
+
+                <label for="ticket_type">Ticket Type:</label>
+                <select id="ticket_type_{{ event['event_id'] }}" name="ticket_type" required>
+                    <option value="VIP">VIP</option>
+                    <option value="Regular">Regular</option>
+                </select>
+
+                <button type="submit">Register</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="/home" class="back-btn">Back to Home</a>
+    
+    <script>
+        // Automatically fade out flash messages after 3 seconds
+        document.addEventListener('DOMContentLoaded', function () {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function (alert) {
+                setTimeout(function () {
+                    alert.style.opacity = 0;
+                    setTimeout(function () {
+                        alert.remove();
+                    }, 500); // Remove element after fade out transition
+                }, 3000); // 3000 milliseconds = 3 seconds
+            });
+        });
+    </script>
 
 </body>
+
 </html>

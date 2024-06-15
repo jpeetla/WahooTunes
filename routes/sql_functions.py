@@ -239,3 +239,4 @@ def get_event_attendee_details():
     result = conn.execute(query).fetchall()
     conn.close()
     return result
+
