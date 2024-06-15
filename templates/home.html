@@ -48,6 +48,35 @@
             background-color: #ddd;
         }
 
+        .secondary-nav {
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .secondary-nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .secondary-nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        .secondary-nav ul li a {
+            text-decoration: none;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .secondary-nav ul li a:hover {
+            background-color: #ddd;
+        }
+
         section {
             padding: 20px;
         }
@@ -122,9 +151,16 @@
             <li><a href="/all_artists">Browse Artists</a></li>
             <li><a href="/all_genres">Browse Genres</a></li>
             <li><a href="/my_ratings">My Ratings</a></li>
+            <li><a href="/my_registrations">My Registrations</a></li>
+            <li><a href="/logout">Logout</a></li>
+        
+        </ul>
+    </nav>
+    <nav class="secondary-nav">
+        <ul>
             <li><a href="/rate">Rate a Song</a></li>
+            <li><a href="/events">Register for Events</a></li>
             <li><a href="/reports">Generate Reports</a></li>
-            <li><a href="/welcome">Logout</a></li>
         </ul>
     </nav>
     <section class="content">
@@ -132,9 +168,8 @@
         <p>Explore our vast collection of songs, artists, and genres.</p>
         <h2>Rate and Review</h2>
         <p>Share your thoughts on your favorite songs and artists.</p>
-        <h2>Upcoming Events</h2>
+        <h2>Venues</h2>
         <p>Check out the map below to see where events will be held!</p>
-        <a href="/events"><button id="registerEventBtn">Register for an Event</button></a>
         <div id="map"></div>
     </section>
     <script>
